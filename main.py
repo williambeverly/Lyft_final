@@ -7,7 +7,7 @@ import tensorflow as tf
 import helper
 import warnings
 from distutils.version import LooseVersion
-import project_tests as tests
+#import project_tests as tests
 
 
 # Check TensorFlow Version
@@ -117,7 +117,7 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
     data_dir = './data'
     runs_dir = './runs'
     
-    if(restart_training)
+    if(restart_training):
         sess.run(tf.global_variables_initializer())
 
     print("Training...")
