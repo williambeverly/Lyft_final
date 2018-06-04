@@ -11,16 +11,15 @@ I utilised three data sources:
 2. https://www.dropbox.com/s/1etgf32uye2iy8q/world_2_w_cars.tar.gz
 3. https://github.com/ongchinkiat/LyftPerceptionChallenge/releases/download/v0.1/carla-capture-20180528.zip
 
-I created a shell script to manage the datasets. I did not preprocess the data. I believe that the VGG16 was pretrained on ImageNet, and I am aware that I should probably subtract the RGB mean of the original training set from the new training data, but I ran out of time, and so I did not test this.
+I created a shell script to manage the datasets. VGG16 was pretrained on ImageNet, so I made sure to feed RGB images, as opposed to BGR. The images were resized to (160, 288, 3).
 
 # Training
-I originally setup my training pipeline to save the model every 10 epochs, as well as run inference inbetween and save the images, to visualise the results. After comparing the performance at 10 epochs to 20 epochs, it appeared that the prediction was becoming worse, so I simply ended the training and my final submitted model was based on 10 epochs. Ideally, I would liked to have trained to 100 epochs, and had time to look through the results, and tweak where possible. However, I was training on a mix of AWS and the Udacity workspace, because my GPU memory is insufficient for local training. I found this to be a bit of a bottleneck. Some key things to highlight:
+I originally setup my training pipeline to save the model every 10 epochs, as well as run inference inbetween and save the images, to visualise the results. After comparing the performance at 10 epochs to 20 epochs, it appeared that the prediction was becoming worse, so I simply ended the training and my final submitted model was based on 10 epochs. Ideally, I would liked to have trained to 100 epochs, and had time to look through the results, and tweak where possible. However, I was training on a mix of AWS and the Udacity workspace, because my GPU memory is insufficient for local training. Some key things to highlight:
 1. I utilised an Adam optimiser with a learning rate of 0.0001
 2. I set my dropout to 0.8
 3. I utilised a kernel initialiser with a random normal with a std dev of 0.001
 4. I utilised a kernel regulariser with l2 regularization with a scale of 0.001
 5. My optmiser was minimising the loss of the cross_entropy and regularization losses, based on tf.reduce_mean
-6. I reduced my image to a shape of (160, 288) to increase the inference speed
 
 # Inference
-After training, I converted my checkpoint file to a frozen_graph based on a script I wrote. Then for inference, I invoked the frozen_graph.pb and fed the image into my prediction tensor. I managed to beat Kyle, so I am happy.
+After training, I converted my checkpoint file to a frozen_graph based on a script I wrote. Then for inference, I invoked the frozen_graph.pb and fed the image into my prediction tensor. I managed to achieve 6.7 FPS in my inference. My next steps are to apply quantization using TensorRt, and then upload it to my TX2 developer kit!
